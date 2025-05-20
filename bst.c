@@ -327,6 +327,11 @@ struct bst_iterator;
  *   Should return the total number of elements stored in bst.
  */
 int bst_size(struct bst* bst) {
+  //WHY WHY WHY WHY WHY WHY WHY
+  //THIS IS THE ABSOLUTE WORST WAY YOU COULD POSSIBLY PROTOTYPE THIS FUNCTION SHORT OF HAVING THE PARAMETER BE A LEAF NODE OR SOMETHING
+  //I HAD TO MAKE A SEPARATE FUNCTION JUST TO DEAL WITH THIS
+  //STILL BETTER THAN PHYSICS 21X STILL BETTER THAN THAT ELECTRICAL CLASS WITH THAT WHINY GUY THAT NEVER SHUTS UP LIKE
+  //DUDE YOU'D PROBABLY NEED TO WHINE LESS ABOUT HOW CONFUSED YOU ARE IF YOU'D STOP TALKING FOR MORE THAN 30 SECONDS AT A TIME
   return (bst_subtreesize(bst -> root));
 }
 
@@ -353,9 +358,22 @@ int bst_subtreesize(struct bst_node* subtree) {
  *   Should return the height of bst.
  */
 int bst_height(struct bst* bst) {
-  return 0;
+  //WHY DID YOU DO THIS TO ME AGAIN
+  return bst_subtreeheight(bst -> root);
 }
 
+int bst_subtreeheight(struct bst_node* sub) {
+  if (sub == NULL) {
+    return 0;
+  } else if (sub -> left == NULL && sub -> right == NULL) {
+    return 0;
+  }
+  if (bst_subtreeheight(sub -> left) >= bst_subtreeheight(sub -> right)) {
+    return 1 + bst_subtreeheight(sub -> left);
+  } else {
+    return 1 + bst_subtreeheight(sub -> right);
+  }
+}
 
 /*
  * This function should determine whether a given BST contains a path from the
