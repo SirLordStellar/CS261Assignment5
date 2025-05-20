@@ -4,8 +4,8 @@
  * functions for this assignment.  Make sure to add your name and
  * @oregonstate.edu email address below:
  *
- * Name:
- * Email:
+ * Name: Sophia Pole
+ * Email: poles@oregonstate.edu
  */
 
 #include <stdio.h>
@@ -327,7 +327,16 @@ struct bst_iterator;
  *   Should return the total number of elements stored in bst.
  */
 int bst_size(struct bst* bst) {
-  return 0;
+  return (bst_subtreesize(bst -> root));
+}
+
+int bst_subtreesize(struct bst_node* subtree) {
+  if (subtree == NULL) {
+    return 0;
+  } else if (subtree -> left == NULL && subtree -> right == NULL) {
+    return 1;
+  }
+  return 1 + (bst_subtreesize(subtree -> left) + bst_subtreesize(subtree -> right));
 }
 
 
