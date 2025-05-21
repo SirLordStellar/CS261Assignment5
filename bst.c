@@ -313,7 +313,10 @@ int bst_contains(int val, struct bst* bst) {
  * This is the structure you will use to create an in-order BST iterator.  It
  * is up to you how to define this structure.
  */
-struct bst_iterator;
+struct bst_iterator {
+  struct bst_node* root;
+  struct stack* values;
+};
 
 
 /*
@@ -364,7 +367,7 @@ int bst_height(struct bst* bst) {
 
 int bst_subtreeheight(struct bst_node* sub) {
   if (sub == NULL) {
-    return 0;
+    return -1;
   } else if (sub -> left == NULL && sub -> right == NULL) {
     return 0;
   }
@@ -388,9 +391,25 @@ int bst_subtreeheight(struct bst_node* sub) {
  *   the values of the nodes add up to sum.  Should return 0 otherwise.
  */
 int bst_path_sum(int sum, struct bst* bst) {
-  return 0;
+  //NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO
+  return bst_subsum(sum, bst -> root);
 }
 
+int bst_subsum(int sum, struct bst_node* sub) {
+  if (sub == NULL) {
+    return 0;
+  }
+  if (sub -> val == sum && sub -> left == NULL && sub -> right == NULL) {
+    return 1;
+  }
+  if (bst_subsum(sum - sub -> val, sub -> left)) {
+    return 1;
+  }
+  if (bst_subsum(sum - sub -> val, sub -> right)) {
+    return 1;
+  }
+  return 0;
+}
 
 /*
  * This function should allocate and initialize a new in-order BST iterator
@@ -405,7 +424,30 @@ int bst_path_sum(int sum, struct bst* bst) {
  *   value in bst (i.e. the leftmost value in the tree).
  */
 struct bst_iterator* bst_iterator_create(struct bst* bst) {
-  return NULL;
+  struct bst_iterator* returniterator = malloc(sizeof(struct bst_iterator));
+  assert(returniterator);
+  assert(bst != NULL);
+  returniterator -> root = bst -> root;
+  returniterator -> values = stack_create();
+  struct stack* fornow = stack_create();
+  int i = stackadd(fornow, returniterator -> root);
+  while(!stack_isempty(fornow)) {
+    stack_push(returniterator -> values, stack_pop(fornow));
+  }
+  stack_free(fornow);
+  return returniterator;
+}
+
+int stackadd(struct stack* stack, struct bst_node* rot) {
+  struct bst_node* now = rot;
+  if (now -> left != NULL) {
+    stackadd(stack, now -> left);
+  }
+  stack_push(stack, &now -> val);
+  if (now -> right != NULL) {
+    stackadd(stack, now -> right);
+  }
+  return 0;
 }
 
 /*
@@ -415,7 +457,7 @@ struct bst_iterator* bst_iterator_create(struct bst* bst) {
  *   iter - the iterator whose memory is to be freed.  May not be NULL.
  */
 void bst_iterator_free(struct bst_iterator* iter) {
-
+  free(iter);
 }
 
 
@@ -428,7 +470,18 @@ void bst_iterator_free(struct bst_iterator* iter) {
  *   iter - the iterator to be checked for more values.  May not be NULL.
  */
 int bst_iterator_has_next(struct bst_iterator* iter) {
-  return 0;
+  if (stack_isempty(iter -> values)) {
+    return 0;
+  }
+  return 1;
+}
+
+int bst_max(struct bst_node* r) {
+  struct bst_node* ret = r;
+  while (ret -> right != NULL) {
+    ret = ret -> right;
+  }
+  return ret -> val;
 }
 
 
@@ -441,5 +494,7 @@ int bst_iterator_has_next(struct bst_iterator* iter) {
  *     and must have at least one more value to be returned.
  */
 int bst_iterator_next(struct bst_iterator* iter) {
-  return 0;
+  assert(iter);
+  int toreturn = *(int*)(stack_pop(iter -> values));
+  return toreturn;
 }
